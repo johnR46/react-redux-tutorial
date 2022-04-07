@@ -1,22 +1,41 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import {Link} from 'react-router-dom'
+
+import {useDispatch, useSelector} from 'react-redux'
+import {setAuth} from "../actions/authAction";
+import {ClearCart} from "../actions/cartAction";
 
 export default function Nav() {
-  return (
-    <header className='head'>
-      <div>
-        <ul className='nav'>
-          <li className='nav-list'>
-            <Link to='/'>Products</Link>
-          </li>
-          <li className='nav-list'>
-            <Link to='/cart'>Cart <span className='cart-num'>2</span></Link>
-          </li>
-          <li className='nav-list'>
-            <Link to='/signin'>Sign in</Link>
-          </li>
-        </ul>
-      </div>
-    </header>
-  )
+    const cart = useSelector((state) => state.cart)
+    const {user} = useSelector((state) => state.auth)
+    const dispatch = useDispatch()
+    return (
+        <header className='head'>
+            <div>
+                <ul className='nav'>
+                    <li className='nav-list'>
+                        <Link to='/'>Products</Link>
+                    </li>
+                    {
+                        user &&
+                        <li className='nav-list'>
+                            <Link to='/cart'>Cart <span className='cart-num'>
+                            {cart.reduce((sum, item) => sum + item.quantity, 0)}
+                        </span>
+                            </Link>
+                        </li>
+                    }
+
+                    <li className='nav-list'>
+                        {user ? <button onClick={() => {
+                                dispatch(setAuth(null))
+                                dispatch(ClearCart())
+                            }}> sign out </button> :
+                            <Link to='/signin'>Sign in</Link>
+                        }
+                    </li>
+                </ul>
+            </div>
+        </header>
+    )
 }

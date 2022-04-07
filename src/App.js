@@ -1,29 +1,48 @@
-import { Switch, Route } from 'react-router-dom'
+import {Switch, Route} from 'react-router-dom'
 
 import Nav from './components/Nav'
 import Products from './pages/Products'
 import Signin from './pages/SIgnin'
 import Cart from './pages/Cart'
 
+
 import './App.css'
+import {useSelector} from "react-redux";
+
+function UnAuthApp() {
+    return (
+        <Switch>
+            <Route path='/signin'>
+                <Signin/>
+            </Route>
+            <Route path='/'>
+                <Products/>
+            </Route>
+        </Switch>
+    )
+}
+
+function AuthApp() {
+    return (
+        <Switch>
+            <Route path='/cart'>
+                <Cart/>
+            </Route>
+            <Route path='/'>
+                <Products/>
+            </Route>
+        </Switch>
+    )
+}
 
 function App() {
-  return (
-    <div className='App'>
-      <Nav />
-      <Switch>
-        <Route path='/signin'>
-          <Signin />
-        </Route>
-        <Route path='/cart'>
-          <Cart />
-        </Route>
-        <Route path='/'>
-          <Products />
-        </Route>
-      </Switch>
-    </div>
-  )
+    const {user} = useSelector(state => state.auth)
+    return (
+        <div className='App'>
+            <Nav/>
+            {!user ? <UnAuthApp/> : <AuthApp/>}
+        </div>
+    )
 }
 
 export default App
